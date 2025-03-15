@@ -21,7 +21,7 @@ class App:
         # Configure logging
         self.configure_logging()
         
-        # Load environment variables
+        # Load environment variables - using the imported function to ensure it can be mocked in tests
         load_dotenv()
         self.settings = self.load_environment_variables()
         self.settings.setdefault('ENVIRONMENT', 'PRODUCTION')
