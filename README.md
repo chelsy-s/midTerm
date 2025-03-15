@@ -12,11 +12,13 @@ This calculator application integrates professional software development practic
 - Dynamic configuration via environment variables
 - Sophisticated data handling with Pandas
 - Interactive command-line interface (REPL)
-- Extensive test coverage (>95%)
+- Extensive test coverage (>98%)
 
 ## Features
 
+- **Basic Calculator Operations**: Add, Subtract, Multiply, and Divide implemented as plugins
 - **Command Pattern Implementation**: Encapsulates operations as objects for flexible execution
+- **Factory Method Pattern**: Creates operation instances dynamically
 - **Plugin System**: Dynamically loads commands without modifying core code
 - **Environment Variable Configuration**: Customizes behavior through environment settings
 - **Comprehensive Logging**: Records operations at configurable detail levels
@@ -88,6 +90,30 @@ class CommandHandler:
         self.commands[command_name] = command
 ```
 
+### Factory Method Pattern
+
+The Factory Method pattern defines an interface for creating objects but lets subclasses decide which classes to instantiate. This is implemented in the calculator operations:
+
+**Implementation**: [app/plugins/operations/__init__.py](app/plugins/operations/__init__.py)
+
+```python
+class OperationFactory:
+    """
+    Factory Method pattern implementation for creating operations.
+    """
+    _operations: Dict[str, Type[Operation]] = {}
+    
+    @classmethod
+    def register_operation(cls, name: str, operation_class: Type[Operation]) -> None:
+        cls._operations[name] = operation_class
+    
+    @classmethod
+    def create_operation(cls, name: str) -> Optional[Operation]:
+        if name in cls._operations:
+            return cls._operations[name]()
+        return None
+```
+
 ### Plugin System
 
 The application uses a dynamic plugin system to load command implementations at runtime:
@@ -126,6 +152,25 @@ except Exception as e:
     return f"Error executing command {command_name}: {str(e)}"
 ```
 
+## Calculator Operations
+
+The calculator implements four basic operations as plugins:
+
+1. **Addition**: Adds two or more numbers together
+   - Implementation: [app/plugins/operations/add/__init__.py](app/plugins/operations/add/__init__.py)
+
+2. **Subtraction**: Subtracts numbers from the first operand
+   - Implementation: [app/plugins/operations/subtract/__init__.py](app/plugins/operations/subtract/__init__.py)
+
+3. **Multiplication**: Multiplies two or more numbers together
+   - Implementation: [app/plugins/operations/multiply/__init__.py](app/plugins/operations/multiply/__init__.py)
+
+4. **Division**: Divides the first operand by subsequent operands
+   - Implementation: [app/plugins/operations/divide/__init__.py](app/plugins/operations/divide/__init__.py)
+   - Special handling for division by zero
+
+Each operation implements validation to ensure proper arguments and error handling.
+
 ## Logging Implementation
 
 The application implements a comprehensive logging system that:
@@ -158,8 +203,9 @@ def configure_logging(self):
 ## Testing
 
 The application has comprehensive test coverage:
-- Over 95% code coverage
-- Unit tests for all core components
+- Over 98% code coverage
+- Unit tests for all core components and operations
+- Edge case testing (like division by zero)
 - Mock objects for external dependencies
 - Continuous integration through GitHub Actions
 
@@ -179,11 +225,10 @@ python -m pytest --cov=app --cov-report=html
 
 The following enhancements are planned:
 
-1. Basic calculator operations (Add, Subtract, Multiply, Divide)
-2. Statistical operations
-3. Calculation history management with Pandas
-4. CSV data handling
-5. Menu system for command discovery
+1. Statistical operations
+2. Calculation history management with Pandas
+3. CSV data handling
+4. Extended operation plugins
 
 ## License
 
