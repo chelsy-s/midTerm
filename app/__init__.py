@@ -24,6 +24,7 @@ import inspect
 from abc import ABC
 
 from app.commands import CommandHandler, Command
+from app.history import history_manager  # Import the history manager
 
 class App:
     """
@@ -157,6 +158,22 @@ class App:
         except ImportError as e:
             logging.error(f"Error importing operation command mapper: {str(e)}")
         
+        # Register history commands
+        try:
+            from app.history.commands import register_history_commands
+            register_history_commands(self.command_handler)
+            logging.info("History commands registered")
+        except ImportError as e:
+            logging.error(f"Error importing history commands: {str(e)}")
+        
+        # Register utility commands
+        try:
+            from app.utils import register_utility_commands
+            register_utility_commands(self.command_handler)
+            logging.info("Utility commands registered")
+        except ImportError as e:
+            logging.error(f"Error importing utility commands: {str(e)}")
+        
         # Register built-in commands
         self.register_help_command()
         self.register_expression_handler()
@@ -212,10 +229,27 @@ Basic Operations:
 Calculator Interface:
   help                           - Show this help message
   menu                           - Show available calculator operations
+  clear                          - Clear the screen
+  cls                            - Clear the screen (alias)
   exit                           - Exit the calculator
 
 Mathematical Expressions:
   You can also enter expressions directly, like: 2+3*4
+
+History Management:
+  history [limit]                - Show calculation history (optional: limit entries)
+  history-save [filepath]        - Save history to CSV file (default: data/history.csv)
+                                   (Can also use "history save")
+  history-load [filepath]        - Load history from CSV file
+                                   (Can also use "history load")
+  history-clear                  - Clear all history entries
+                                   (Can also use "history clear")
+  history-delete [index]         - Delete a specific history entry
+                                   (Can also use "history delete")
+  history-stats                  - Show statistics about your calculations
+                                   (Can also use "history stats")
+  history-search [term]          - Search history for matching entries
+                                   (Can also use "history search")
 
 Examples:
   add 5 10 15      => Result: 30.0
@@ -223,6 +257,8 @@ Examples:
   multiply 2 3 4   => Result: 24.0
   divide 100 4 5   => Result: 5.0
   5+10-2           => Result: 13.0
+  history 5        => Shows the last 5 entries in history
+  history stats    => Shows statistics about your calculations
                 """
                 return help_text.strip()
                 
@@ -344,6 +380,8 @@ Examples:
         print("\n===== Advanced Python Calculator =====")
         print("Type 'help' for available commands or 'exit' to quit.")
         print("You can use commands like 'add 5 3' or expressions like '5+3'")
+        print("Try 'menu' to see available operations")
+        print("Type 'history' to view your calculation history")
         print("=======================================\n")
         logging.info("Application started. Type 'exit' to exit.")
         
@@ -365,12 +403,32 @@ Examples:
                 command = command_parts[0].lower() if command_parts else ""
                 args = command_parts[1:] if len(command_parts) > 1 else []
                 
+                # Check for commands with subcommands (e.g., "history stats" instead of "history-stats")
+                if len(command_parts) > 1 and command == "history":
+                    # Check if "history-subcommand" exists
+                    possible_command = f"history-{command_parts[1].lower()}"
+                    if possible_command in self.command_handler.commands:
+                        command = possible_command
+                        args = command_parts[2:] if len(command_parts) > 2 else []
+                
+                # Check if this is a registered command
+                is_registered_command = command in self.command_handler.commands
+                
                 # Special case: check if it's a mathematical expression
-                if any(op in cmd_input for op in '+-*/') and not command.isalpha():
+                # Only treat it as an expression if it's not a registered command
+                if not is_registered_command and any(op in cmd_input for op in '+-*/') and not command.isalpha():
                     result = self.command_handler.execute_command_eafp("expression", cmd_input)
+                    
+                    # Add to history if it's a valid expression result
+                    if result is not None and not result.startswith("Error"):
+                        history_manager.add_entry("expression", cmd_input, result)
                 else:
                     # Execute as a normal command
                     result = self.command_handler.execute_command_eafp(command, *args)
+                    
+                    # Add to history if it's a calculator operation (not a utility command)
+                    if result is not None and command in ["add", "subtract", "multiply", "divide"] and not result.startswith("Error"):
+                        history_manager.add_entry(command, ' '.join(args), result)
                 
                 if result is not None:
                     print(result)
