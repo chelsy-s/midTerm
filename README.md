@@ -17,6 +17,7 @@ This calculator application integrates professional software development practic
 ## Features
 
 - **Basic Calculator Operations**: Add, Subtract, Multiply, and Divide implemented as plugins
+- **Statistical Operations**: Mean, Median, Standard Deviation implemented as plugins
 - **Calculation History Management**: Track, save, load, and analyze calculation history using Pandas
 - **CSV File Handling**: Save and load calculation history to/from CSV files
 - **Command Pattern Implementation**: Encapsulates operations as objects for flexible execution
@@ -197,7 +198,9 @@ except Exception as e:
 
 ## Calculator Operations
 
-The calculator implements four basic operations as plugins:
+The calculator implements basic arithmetic and statistical operations as plugins:
+
+### Basic Operations
 
 1. **Addition**: Adds two or more numbers together
    - Implementation: [app/plugins/operations/add/__init__.py](app/plugins/operations/add/__init__.py)
@@ -211,6 +214,17 @@ The calculator implements four basic operations as plugins:
 4. **Division**: Divides the first operand by subsequent operands
    - Implementation: [app/plugins/operations/divide/__init__.py](app/plugins/operations/divide/__init__.py)
    - Special handling for division by zero
+
+### Statistical Operations
+
+5. **Mean**: Calculates the arithmetic mean (average) of multiple numbers
+   - Implementation: [app/plugins/operations/statistics/__init__.py](app/plugins/operations/statistics/__init__.py)
+
+6. **Median**: Calculates the median value of a set of numbers
+   - Implementation: [app/plugins/operations/statistics/__init__.py](app/plugins/operations/statistics/__init__.py)
+
+7. **Standard Deviation**: Calculates the sample standard deviation of a set of numbers
+   - Implementation: [app/plugins/operations/statistics/__init__.py](app/plugins/operations/statistics/__init__.py)
 
 Each operation implements validation to ensure proper arguments and error handling.
 
@@ -306,7 +320,7 @@ python -m pytest --cov=app --cov-report=html
 
 The following enhancements are planned:
 
-1. Additional statistical operations (mean, median, standard deviation)
+1. ~~Additional statistical operations (mean, median, standard deviation)~~ ✓ Implemented
 2. Data visualization for calculation history
 3. Extended CSV import/export capabilities
 4. User profiles with separate history tracking

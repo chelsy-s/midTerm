@@ -50,5 +50,33 @@ method-rgx=[a-z_][a-z0-9_]{2,50}$
 # Module names should have short, all-lowercase names. The use of underscores is discouraged.
 module-rgx=[a-z_][a-z0-9_]{1,30}$
 
-# Class names
+# Class names should typically use the CapWords convention
+class-rgx=[A-Z_][a-zA-Z0-9_]+$
+
+# Constant names
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+
+[FORMAT]
+# Maximum line length
+max-line-length=100
+
+# Expected format of line ending, e.g. empty (any line ending), LF or CRLF.
+expected-line-ending-format=LF
+
+[SIMILARITIES]
+# Minimum lines number of a similarity.
+min-similarity-lines=4
+
+# Ignore comments when computing similarities.
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities.
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities.
+ignore-imports=yes
+
+[TYPECHECK]
+# List of members which are set dynamically and missed by pylint inference system
+generated-members=numpy.*,torch.*,pandas.*,pd.*,np.*
 

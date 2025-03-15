@@ -3,7 +3,13 @@ source = app
 omit = 
     */tests/*
     */site-packages/*
+    */dist-packages/*
+    */venv/*
     main.py
+    */__pycache__/*
+    */migrations/*
+    */commands/__pycache__/*
+    */.pytest_cache/*
 
 [report]
 exclude_lines =
@@ -13,3 +19,13 @@ exclude_lines =
     if __name__ == .__main__.:
     pass
     raise ImportError
+    except ImportError
+    def __str__
+    class .*\bAbstract.*\b
+    @abc.abstractmethod
+
+[html]
+directory = coverage_html_report
+
+[xml]
+output = coverage.xml

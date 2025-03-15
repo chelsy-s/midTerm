@@ -55,8 +55,14 @@ class App:
         # Configure logging
         self.configure_logging()
         
-        # Load environment variables - using the imported function to ensure it can be mocked in tests
-        load_dotenv()
+        # Load environment variables from .env file if present
+        # Using the imported function to ensure it can be mocked in tests
+        env_loaded = load_dotenv(verbose=True)
+        if env_loaded:
+            logging.info("Environment variables loaded from .env file")
+        else:
+            logging.info("No .env file found, using system environment variables")
+            
         self.settings = self.load_environment_variables()
         self.settings.setdefault('ENVIRONMENT', 'PRODUCTION')
         
@@ -95,13 +101,26 @@ class App:
         Load environment variables into settings dictionary.
         
         This method demonstrates environment variable configuration
-        for application settings.
+        for application settings. It leverages python-dotenv to load
+        variables from a .env file if present, falling back to system
+        environment variables.
+        
+        Supported variables:
+            ENVIRONMENT: Running environment (DEVELOPMENT, TESTING, PRODUCTION)
+            LOG_LEVEL: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         
         Returns:
             dict: Dictionary containing environment variables
         """
         settings = {key: value for key, value in os.environ.items()}
-        logging.info("Environment variables loaded")
+        
+        # Log loaded environment variables (excluding sensitive ones)
+        safe_vars = {k: v for k, v in settings.items() 
+                     if not any(sensitive in k.lower() for sensitive in ['pass', 'secret', 'key', 'token'])}
+        
+        logging.info(f"Environment: {settings.get('ENVIRONMENT', 'PRODUCTION')}")
+        logging.info(f"Log level: {settings.get('LOG_LEVEL', 'INFO')}")
+        
         return settings
 
     def get_environment_variable(self, env_var: str = 'ENVIRONMENT'):
@@ -226,6 +245,11 @@ Basic Operations:
   multiply [number1] [number2] ... - Multiply numbers together
   divide [number1] [number2] ...   - Divide the first number by subsequent numbers
 
+Statistical Operations:
+  mean [number1] [number2] ...    - Calculate the average of numbers
+  median [number1] [number2] ...  - Calculate the middle value of numbers
+  stddev [number1] [number2] ...  - Calculate the standard deviation of numbers
+
 Calculator Interface:
   help                           - Show this help message
   menu                           - Show available calculator operations
@@ -256,6 +280,9 @@ Examples:
   subtract 20 5 3  => Result: 12.0
   multiply 2 3 4   => Result: 24.0
   divide 100 4 5   => Result: 5.0
+  mean 1 2 3 4 5   => Result: 3.0
+  median 1 3 5 7 9 => Result: 5.0
+  stddev 2 4 4 4 5 => Result: 1.0
   5+10-2           => Result: 13.0
   history 5        => Shows the last 5 entries in history
   history stats    => Shows statistics about your calculations
