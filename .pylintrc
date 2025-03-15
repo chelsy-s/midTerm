@@ -1,0 +1,24 @@
+[MASTER]
+init-hook='import sys; sys.path.append(".")'
+extension-pkg-whitelist=numpy,pandas
+disable=
+    C0103, # Variable name doesn't conform to snake_case naming style
+    C0111, # Missing docstring
+    W0212, # Access to a protected member
+    R0903, # Too few public methods
+    R0913, # Too many arguments
+
+[FORMAT]
+max-line-length=100
+
+[REPORTS]
+output-format=colorized
+reports=yes
+evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+
+[BASIC]
+good-names=i,j,k,ex,Run,_,id
+
+[DESIGN]
+max-args=6
+max-attributes=12
