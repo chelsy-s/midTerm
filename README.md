@@ -38,7 +38,7 @@ This calculator application integrates professional software development practic
 
 1. Clone the repository
    ```
-   git clone https://github.com/YOUR_USERNAME/midTerm.git
+   git clone https://github.com/chelsy-s/midTerm.git
    cd midTerm
    ```
 
