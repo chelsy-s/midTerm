@@ -379,7 +379,7 @@ The project follows professional version control practices:
 
 ## Video Demonstration
 
-[Watch the Calculator Demo Video]()
+[Watch the Calculator Demo Video](https://github.com/chelsy-s/midTerm/issues/2#issue-2923072324)
 
 This video showcases:
 - Basic calculator operations
