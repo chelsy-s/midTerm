@@ -230,10 +230,6 @@ The following enhancements are planned:
 3. CSV data handling
 4. Extended operation plugins
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
 
 © 2025 Advanced Python Calculator
