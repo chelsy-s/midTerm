@@ -17,8 +17,11 @@ This calculator application integrates professional software development practic
 ## Features
 
 - **Basic Calculator Operations**: Add, Subtract, Multiply, and Divide implemented as plugins
+- **Calculation History Management**: Track, save, load, and analyze calculation history using Pandas
+- **CSV File Handling**: Save and load calculation history to/from CSV files
 - **Command Pattern Implementation**: Encapsulates operations as objects for flexible execution
 - **Factory Method Pattern**: Creates operation instances dynamically
+- **Facade Pattern**: Simplifies interaction with Pandas for history management
 - **Plugin System**: Dynamically loads commands without modifying core code
 - **Environment Variable Configuration**: Customizes behavior through environment settings
 - **Comprehensive Logging**: Records operations at configurable detail levels
@@ -35,7 +38,7 @@ This calculator application integrates professional software development practic
 
 1. Clone the repository
    ```
-   git clone https://github.com/YOUR_USERNAME/midTerm.git
+   git clone https://github.com/chelsy-s/midTerm.git
    cd midTerm
    ```
 
@@ -60,7 +63,15 @@ The application can be configured using these environment variables:
 
 You can set these variables in a `.env` file in the project root directory.
 
-## Design Patterns
+Example `.env` file:
+```
+ENVIRONMENT=DEVELOPMENT
+LOG_LEVEL=DEBUG
+```
+
+## Design Patterns Implementation
+
+The calculator applies several design patterns to create a maintainable, flexible architecture:
 
 ### Command Pattern
 
@@ -114,13 +125,31 @@ class OperationFactory:
         return None
 ```
 
+### Facade Pattern
+
+The Facade pattern provides a simplified interface to a complex subsystem. This is implemented in the history management module to provide a clean interface for Pandas operations:
+
+**Implementation**: [app/history/__init__.py](app/history/__init__.py)
+
+```python
+class HistoryManager:
+    """
+    Manages calculator operation history using Pandas.
+    
+    This class implements the Facade pattern by providing a simplified interface
+    to complex Pandas data operations.
+    """
+    # Methods for add_entry, save_history, load_history, etc.
+    # that simplify interactions with the underlying Pandas DataFrame
+```
+
 ### Plugin System
 
 The application uses a dynamic plugin system to load command implementations at runtime:
 
 **Implementation**: [app/__init__.py](app/__init__.py)
 
-This design allows for extending the application's functionality without modifying core code.
+This design allows for extending the application's functionality without modifying core code, adhering to the Open/Closed Principle.
 
 ## Error Handling Approaches
 
@@ -131,11 +160,18 @@ The application demonstrates two complementary error handling approaches:
 The LBYL approach checks conditions before performing an operation:
 
 ```python
-# LBYL approach in CommandHandler.execute_command
-if command_name in self.commands:
-    return self.commands[command_name].execute(*args, **kwargs)
-else:
-    return f"No such command: {command_name}"
+# LBYL approach in CommandHandler.execute_command_lbyl
+if command_name not in self.commands:
+    error_msg = f"Unknown command: '{command_name}'"
+    self.logger.warning(error_msg)
+    return error_msg
+    
+try:
+    command = self.commands[command_name]
+    result = command.execute(*args, **kwargs)
+    return result
+except Exception as e:
+    # ...
 ```
 
 ### Easier to Ask for Forgiveness than Permission (EAFP)
@@ -145,11 +181,18 @@ The EAFP approach uses try/except to handle errors after they occur:
 ```python
 # EAFP approach in CommandHandler.execute_command_eafp
 try:
-    return self.commands[command_name].execute(*args, **kwargs)
+    # Try to execute the command (Easier to Ask for Forgiveness)
+    command = self.commands[command_name]
+    result = command.execute(*args, **kwargs)
+    return result
 except KeyError:
-    return f"No such command: {command_name}"
+    # Command not found
+    error_msg = f"Unknown command: '{command_name}'. Type 'help' for available commands."
+    self.logger.warning(error_msg)
+    return error_msg
 except Exception as e:
-    return f"Error executing command {command_name}: {str(e)}"
+    # Other execution errors
+    # ...
 ```
 
 ## Calculator Operations
@@ -170,6 +213,33 @@ The calculator implements four basic operations as plugins:
    - Special handling for division by zero
 
 Each operation implements validation to ensure proper arguments and error handling.
+
+## History Management
+
+The calculator includes a history management system that tracks all calculations:
+
+1. **History Tracking**: Automatic recording of all calculator operations
+   - Implementation: [app/history/__init__.py](app/history/__init__.py)
+
+2. **History Commands**: View, save, load, clear, and analyze history
+   - Implementation: [app/history/commands.py](app/history/commands.py)
+
+3. **CSV Integration**: Save and load history data in CSV format using Pandas
+   - Default location: `data/history.csv`
+
+4. **History Statistics**: Analyze usage patterns with operation frequency and timestamps
+
+### History Command Examples
+
+```
+history           # Show all calculation history
+history 5         # Show the last 5 entries
+history-save      # Save history to default file
+history-load      # Load history from default file
+history-clear     # Clear all history entries
+history-stats     # Show statistics about your calculations
+history-search 5  # Search for entries containing "5"
+```
 
 ## Logging Implementation
 
@@ -200,6 +270,17 @@ def configure_logging(self):
             logging.getLogger().setLevel(numeric_level)
 ```
 
+## Data Handling with Pandas
+
+The application uses Pandas for sophisticated data management:
+
+1. **DataFrame Storage**: History is maintained in a structured Pandas DataFrame
+2. **CSV Import/Export**: History can be saved to and loaded from CSV files
+3. **Data Filtering**: Advanced filtering and search capabilities for history entries
+4. **Statistics Generation**: Analysis of operation usage patterns
+
+**Implementation**: [app/history/__init__.py](app/history/__init__.py)
+
 ## Testing
 
 The application has comprehensive test coverage:
@@ -225,15 +306,12 @@ python -m pytest --cov=app --cov-report=html
 
 The following enhancements are planned:
 
-1. Statistical operations
-2. Calculation history management with Pandas
-3. CSV data handling
-4. Extended operation plugins
+1. Additional statistical operations (mean, median, standard deviation)
+2. Data visualization for calculation history
+3. Extended CSV import/export capabilities
+4. User profiles with separate history tracking
+5. Web API for remote calculator access
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
 
 © 2025 Advanced Python Calculator
