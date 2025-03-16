@@ -9,7 +9,26 @@ load-plugins=pylint_django
 # Disable the following checks (example list):
 disable= unused-argument,
          line-too-long,
-         redefined-outer-name
+         redefined-outer-name,
+         trailing-whitespace,
+         logging-fstring-interpolation,
+         broad-exception-caught,
+         duplicate-code,
+         no-else-return,
+         import-outside-toplevel,
+         unused-variable,
+         unnecessary-pass,
+         missing-final-newline,
+         unexpected-line-ending-format,
+         inconsistent-return-statements,
+         too-many-nested-blocks,
+         unreachable,
+         unnecessary-comprehension,
+         return-in-finally,
+         lost-exception,
+         arguments-differ,
+         django-not-available,
+         unrecognized-option
 
 [REPORTS]
 # Set the output format. Available formats: text, parseable, colorized, json, msvs (visual studio) and html
@@ -50,5 +69,33 @@ method-rgx=[a-z_][a-z0-9_]{2,50}$
 # Module names should have short, all-lowercase names. The use of underscores is discouraged.
 module-rgx=[a-z_][a-z0-9_]{1,30}$
 
-# Class names
+# Class names should typically use the CapWords convention
+class-rgx=[A-Z_][a-zA-Z0-9_]+$
+
+# Constant names
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+
+[FORMAT]
+# Maximum line length
+max-line-length=100
+
+# Expected format of line ending, e.g. empty (any line ending), LF or CRLF.
+expected-line-ending-format=LF
+
+[SIMILARITIES]
+# Minimum lines number of a similarity.
+min-similarity-lines=4
+
+# Ignore comments when computing similarities.
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities.
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities.
+ignore-imports=yes
+
+[TYPECHECK]
+# List of members which are set dynamically and missed by pylint inference system
+generated-members=numpy.*,torch.*,pandas.*,pd.*,np.*
 
