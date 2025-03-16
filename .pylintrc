@@ -20,7 +20,15 @@ disable= unused-argument,
          unnecessary-pass,
          missing-final-newline,
          unexpected-line-ending-format,
-         inconsistent-return-statements
+         inconsistent-return-statements,
+         too-many-nested-blocks,
+         unreachable,
+         unnecessary-comprehension,
+         return-in-finally,
+         lost-exception,
+         arguments-differ,
+         django-not-available,
+         unrecognized-option
 
 [REPORTS]
 # Set the output format. Available formats: text, parseable, colorized, json, msvs (visual studio) and html

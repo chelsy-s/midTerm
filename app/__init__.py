@@ -124,10 +124,10 @@ class App:
         Returns:
             dict: Dictionary containing environment variables
         """
-        settings = {key: value for key, value in os.environ.items()}
-
+        settings = dict(os.environ.items())
+        
         # Log loaded environment variables (excluding sensitive ones)
-        safe_vars = {k: v for k, v in settings.items()
+        safe_vars = {k: v for k, v in settings.items() 
                      if not any(sensitive in k.lower() for sensitive in ['pass', 'secret', 'key', 'token'])}
 
         logging.info(f"Environment: {settings.get('ENVIRONMENT', 'PRODUCTION')}")
