@@ -203,7 +203,7 @@ def configure_logging(self):
 ## Testing
 
 The application has comprehensive test coverage:
-- Over 98% code coverage
+- Over 90% code coverage
 - Unit tests for all core components and operations
 - Edge case testing (like division by zero)
 - Mock objects for external dependencies
