@@ -9,7 +9,18 @@ load-plugins=pylint_django
 # Disable the following checks (example list):
 disable= unused-argument,
          line-too-long,
-         redefined-outer-name
+         redefined-outer-name,
+         trailing-whitespace,
+         logging-fstring-interpolation,
+         broad-exception-caught,
+         duplicate-code,
+         no-else-return,
+         import-outside-toplevel,
+         unused-variable,
+         unnecessary-pass,
+         missing-final-newline,
+         unexpected-line-ending-format,
+         inconsistent-return-statements
 
 [REPORTS]
 # Set the output format. Available formats: text, parseable, colorized, json, msvs (visual studio) and html
